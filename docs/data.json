@@ -1,0 +1,231 @@
+{
+    "project": {},
+    "files": {
+        "lib/main.js": {
+            "name": "lib/main.js",
+            "modules": {
+                "tap-wrapper": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "lib/wrap.js": {
+            "name": "lib/wrap.js",
+            "modules": {},
+            "classes": {
+                "Wrap": 1,
+                "WrapLoud": 1,
+                "WrapSilent": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "tap-wrapper": {
+            "name": "tap-wrapper",
+            "submodules": {},
+            "classes": {
+                "Wrap": 1,
+                "WrapLoud": 1,
+                "WrapSilent": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "lib/wrap.js",
+            "line": 48
+        }
+    },
+    "classes": {
+        "Wrap": {
+            "name": "Wrap",
+            "shortname": "Wrap",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "tap-wrapper",
+            "namespace": "",
+            "file": "lib/wrap.js",
+            "line": 6,
+            "description": "Base Wrapper static class that relays end signal to tap.Test",
+            "static": 1
+        },
+        "WrapLoud": {
+            "name": "WrapLoud",
+            "shortname": "WrapLoud",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "tap-wrapper",
+            "namespace": "",
+            "file": "lib/wrap.js",
+            "line": 26,
+            "description": "Wrap a function and allow tap tests to print to STDOUT as normal",
+            "is_constructor": 1,
+            "extends": "{Wrap}",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "the function that returns tap.Test()",
+                    "type": "Function"
+                }
+            ],
+            "return": {
+                "description": "the wrapper function is returned",
+                "type": "Function"
+            }
+        },
+        "WrapSilent": {
+            "name": "WrapSilent",
+            "shortname": "WrapSilent",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "tap-wrapper",
+            "namespace": "",
+            "file": "lib/wrap.js",
+            "line": 48,
+            "description": "##### Prevents node-tap harness from writing output to STDOUT\n - Creates a new stream that returns summary of results in JSON so can access programmatically\n - Good for testing test helpers -> eg used in unit tests for [tap-test-helpers](https://npmjs.org/package/tap-test-helpers) module\n                   > so can do fn.Producer.on('end', fn (results))",
+            "is_constructor": 1,
+            "extends": "{Wrap}",
+            "params": [
+                {
+                    "name": "test",
+                    "description": "helper function which contains tap.test() function",
+                    "type": "Function"
+                },
+                {
+                    "name": "tp",
+                    "description": "instance of tap.Producer stream",
+                    "type": "AbstractFactory"
+                }
+            ],
+            "return": {
+                "description": "returns original function bound to new context",
+                "type": "Function"
+            }
+        }
+    },
+    "classitems": [
+        {
+            "file": "lib/wrap.js",
+            "line": 14,
+            "description": "Relay end() call to tap test instance",
+            "itemtype": "method",
+            "name": "end",
+            "params": [
+                {
+                    "name": "t",
+                    "description": "instance of tap.Test",
+                    "type": "Test"
+                }
+            ],
+            "return": {
+                "description": "return the instance of the tap test",
+                "type": "Test"
+            },
+            "class": "Wrap",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 72,
+            "description": "Factory instance of AbstractFactory class",
+            "itemtype": "property",
+            "name": "Factory",
+            "type": "{AbstractFactory}",
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 79,
+            "description": "Producer new instance of tap.Producer",
+            "itemtype": "property",
+            "name": "Producer",
+            "type": "Tap.Producer",
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 86,
+            "description": "test helper function passed as param, now bound to WrapSilent context",
+            "itemtype": "property",
+            "name": "test",
+            "type": "{Function}",
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 101,
+            "description": "Handle test end call",
+            "itemtype": "method",
+            "name": "end",
+            "params": [
+                {
+                    "name": "t",
+                    "description": "instance of Tap.test",
+                    "type": "Test"
+                }
+            ],
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 113,
+            "description": "Silence the tap.test output to STDOUT by calling t.clear()\nSave results first and pipe into new tap.Producer stream",
+            "itemtype": "method",
+            "name": "silence",
+            "params": [
+                {
+                    "name": "t",
+                    "description": "instance of Tap.test",
+                    "type": "Test"
+                }
+            ],
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 127,
+            "description": "Pipe the results using the Tap.Producer stream",
+            "itemtype": "method",
+            "name": "writeStream",
+            "params": [
+                {
+                    "name": "res",
+                    "description": "JSON obj representing test results",
+                    "type": "Object"
+                }
+            ],
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        },
+        {
+            "file": "lib/wrap.js",
+            "line": 138,
+            "description": "Exports Hash of Wrap Classes",
+            "type": "{WrapSilent} Wrap Silent class",
+            "class": "WrapSilent",
+            "module": "tap-wrapper"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nExports Hash of Wrap Classes",
+            "line": " lib/wrap.js:138"
+        }
+    ]
+}

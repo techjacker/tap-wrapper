@@ -1,0 +1,44 @@
+{
+  "name": "tap-wrapper",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "wrapper for unit testing node-tap test helper functions",
+  "tags": [
+    "tap",
+    "node-tap",
+    "test",
+    "tests",
+    "testing",
+    "wrapper",
+    "intercept",
+    "overload"
+  ],
+  "author": {
+    "name": "Andrew Griffiths",
+    "email": "mail@andrewgriffithsonline.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:techjacker/tap-wrapper.git"
+  },
+  "engines": [
+    "node >= 0.6.0"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "tap ./test",
+    "docs": "yuidoc -o ./docs ./lib"
+  },
+  "dependencies": {
+    "abstract-factory": ">=0.0.1",
+    "tap": ">=0.4",
+    "underscore": ">=1.4",
+    "custom-errors": "~1.4.1",
+    "curry": "~0.0.4"
+  },
+  "devDependencies": {
+    "tap": ">=0.4",
+    "yuidocjs": "0.3.x",
+    "underscore": ">=1.4"
+  }
+}

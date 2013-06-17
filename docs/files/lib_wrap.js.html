@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>lib/wrap.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Wrap.html">Wrap</a></li>
+            
+                <li><a href="../classes/WrapLoud.html">WrapLoud</a></li>
+            
+                <li><a href="../classes/WrapSilent.html">WrapSilent</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/tap-wrapper.html">tap-wrapper</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: lib/wrap.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+var _               = require(&#x27;underscore&#x27;),
+    AbstractFactory = require(&#x27;abstract-factory&#x27;),
+	ValidationError = require(&#x27;custom-errors&#x27;).general.ValidationError,
+    TP              = require(&#x27;tap&#x27;).Producer;
+
+/**
+ * Base Wrapper static class that relays end signal to tap.Test
+ *
+ * @class Wrap
+ * @static
+ */
+var Wrap = {
+
+	/**
+	 * Relay end() call to tap test instance
+	 * @method end
+	 * @param  {Test} t instance of tap.Test
+	 * @return {Test} return the instance of the tap test
+	 */
+	end: function (t) {
+		return t.end();
+	}
+};
+
+
+/**
+ * Wrap a function and allow tap tests to print to STDOUT as normal
+ *
+ * @class WrapLoud
+ * @constructor
+ * @extends {Wrap}
+ *
+ * @param  {Function} fn the function that returns tap.Test()
+ *
+ * @return {Function}      the wrapper function is returned
+ */
+var WrapLoud = function (fn) {
+	if (!(this instanceof WrapLoud)) {
+		return new WrapLoud(fn);
+	}
+
+	return fn.bind(this);
+};
+
+WrapLoud.prototype = Object.create(Wrap);
+
+
+/**
+ * ##### Prevents node-tap harness from writing output to STDOUT
+ *  - Creates a new stream that returns summary of results in JSON so can access programmatically
+ *  - Good for testing test helpers -&gt; eg used in unit tests for [tap-test-helpers](https://npmjs.org/package/tap-test-helpers) module
+ *                    &gt; so can do fn.Producer.on(&#x27;end&#x27;, fn (results))
+ *
+ * @class WrapSilent
+ * @constructor
+ * @extends {Wrap}
+ *
+ * @param {Function} test helper function which contains tap.test() function
+ * @param {AbstractFactory} tp instance of tap.Producer stream
+ * @return {Function} returns original function bound to new context
+ */
+var WrapSilent = function (fn, factory) {
+
+	if (!(this instanceof WrapSilent)) {
+		return new WrapSilent(fn, factory);
+	}
+	if (!(factory instanceof AbstractFactory)) {
+		throw new ValidationError(&#x27;need factory to be instanceof AbstractFactory&#x27;);
+	}
+
+
+	/**
+	 * Factory instance of AbstractFactory class
+	 *
+	 * @property Factory
+	 * @type {AbstractFactory}
+	 */
+	this.Factory = factory;
+	/**
+	 * Producer new instance of tap.Producer
+	 *
+	 * @property Producer
+	 * @type Tap.Producer
+	 */
+	this.Producer = this.Factory.getFactory(&#x27;TapProducer&#x27;);
+	/**
+	 * test helper function passed as param, now bound to WrapSilent context
+	 *
+	 * @property test
+	 * @type {Function}
+	 */
+	this.test = fn.bind(this);
+
+	return _(this).bindAll(&#x27;end&#x27;, &#x27;silence&#x27;, &#x27;writeStream&#x27;);
+};
+
+WrapSilent.prototype = Object.create(Wrap);
+// require(&#x27;util&#x27;).inherits(WrapSilent, WrapLoud);
+
+
+/**
+ * Handle test end call
+ *
+ * @method end
+ * @param  {Test} t instance of Tap.test
+ */
+WrapSilent.prototype.end = function (t) {
+	this.silence(t);
+	this.Factory.getFactory(&#x27;Wrap&#x27;).end(t); // Wrap.end(t); // t.end()
+	// WrapSilent.super_.prototype.end(t); // Wrap.end(t); // t.end()
+};
+
+/**
+ * Silence the tap.test output to STDOUT by calling t.clear()
+ * Save results first and pipe into new tap.Producer stream
+ *
+ * @method silence
+ *
+ * @param  {Test} t instance of Tap.test
+ */
+WrapSilent.prototype.silence = function (t) {
+	t.results.list.forEach(this.writeStream);
+	this.Producer.end();
+	t.clear.call(t);
+};
+
+/**
+ * Pipe the results using the Tap.Producer stream
+ *
+ * @method writeStream
+ *
+ * @param  {Object} res JSON obj representing test results
+ */
+WrapSilent.prototype.writeStream = function (res) {
+	this.Producer.write(res);
+};
+
+/**
+ * Exports Hash of Wrap Classes
+ *
+ * @type {Wrap} Base Wrapper static class
+ * @type {WrapLoud} Wrap Loud class
+ * @type {WrapSilent} Wrap Silent class
+ */
+module.exports = {
+	Wrap: Wrap,
+	WrapLoud: WrapLoud,
+	WrapSilent: WrapSilent
+};
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
