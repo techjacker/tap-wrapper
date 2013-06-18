@@ -15,6 +15,11 @@
 npm install tap-wrapper
 ```
 
+### Docs
+[Yuidocs documentation here](docs/index.html)
+- link only works when checkout repo and preview README locally
+
+
 ## Api
 
 #### Helper Test Function (```helperTestFn```) to be wrapped
